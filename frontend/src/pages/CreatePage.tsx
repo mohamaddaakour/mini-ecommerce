@@ -4,10 +4,10 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
 import { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 
-import type { ChangeEvent } from "react";
-
-import type { CreateState } from "../types";
+import type { CreateState, Product } from "../types";
+import useProductStore from "../store/productStore";
 
 function CreatePage() {
   const [data, setData] = useState<CreateState>({
@@ -16,17 +16,18 @@ function CreatePage() {
     image: "",
   });
 
-  // handle the change of inputs and change the state value
+  const createProduct = useProductStore((state) => state.createProduct);
+
   function handleInputs(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
 
-    setData((preview) => {
-      return { ...preview, [name]: value };
-    });
+    setData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   }
 
-  // handle the submit
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     if (!data.name || !data.price || !data.image) {
@@ -34,12 +35,25 @@ function CreatePage() {
       return;
     }
 
-    console.log(data);
+    const newProduct: Product = {
+      name: data.name,
+      image: data.image,
+      price: data.price,
+    };
+
+    const { success, message } = await createProduct(newProduct);
+
+    alert(message);
+
+    if (success) {
+      setData({ name: "", price: "", image: "" });
+    }
   }
 
   return (
     <Container
       component="form"
+      onSubmit={handleSubmit}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -49,7 +63,6 @@ function CreatePage() {
         backgroundColor: "rgb(137, 207, 240)",
         marginTop: "125px",
       }}
-      onSubmit={handleSubmit}
     >
       <Typography variant="h3" gutterBottom sx={{ mt: "12px" }}>
         Create New Product
@@ -57,23 +70,22 @@ function CreatePage() {
 
       <TextField
         label="Name"
-        variant="outlined"
         name="name"
         value={data.name}
         onChange={handleInputs}
         sx={{ backgroundColor: "white" }}
       />
+
       <TextField
         label="Price"
-        variant="outlined"
         name="price"
         value={data.price}
         onChange={handleInputs}
         sx={{ backgroundColor: "white" }}
       />
+
       <TextField
         label="Image"
-        variant="outlined"
         name="image"
         value={data.image}
         onChange={handleInputs}
