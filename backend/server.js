@@ -8,7 +8,7 @@ const app = express();
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 6000;
 
 // to enable giving json in the body request
 app.use(express.json());

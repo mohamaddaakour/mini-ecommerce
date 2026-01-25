@@ -14,13 +14,17 @@ async function getProducts(request, response) {
 
 // funtion to add a new product to the database
 async function postProducts(request, response) {
-    const product = request.body;
+    const { name, price, image } = request.body;
+
+    if (!name || !price || !image) {
+        return response.status(400).json({ success: false, message: "All fields are required" });
+    }
 
     try {
-        const newProduct = new Product(product);
+        const newProduct = new Product(request.body);
         await newProduct.save();
 
-        response.status(201).json({ success: "true", message: newProduct });
+        response.status(201).json({ success: true, message: newProduct });
     } catch (error) {
         console.log(`Error creating new product ${error.message}`);
         response.status(500).json({ success: false, message: "Error creating a new product" });
@@ -55,7 +59,7 @@ async function deleteProduct(request, response) {
     }
 
     try {
-        await Product.findByIdAndDelete(id, product);
+        await Product.findByIdAndDelete(id);
         response.status(200).json({ success: true, message: "product deleted" });
     } catch (error) {
         console.log(`Error deleting the product ${error.message}`);
