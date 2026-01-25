@@ -1,29 +1,20 @@
 import express from "express"
 import dotenv from "dotenv"
 
-import connectDb from "./config/db.js";
-import router from "./routes/productRoutes.js";
-
-dotenv.config();
+import connectDB from "./config/db.js";
 
 const app = express();
 
-// to put JSON in request.body
-app.use(express.json());
+dotenv.config();
 
-app.use("/products", router);
+const PORT = process.env.PORT;
 
-// function to start the server
-async function startServer() {
-    try {
-        await connectDb();
-        app.listen(process.env.PORT, () => {
-            console.log(`Server running on port ${process.env.PORT}`);
-        });
-    } catch (error) {
-        console.error("Failed to start server:", error.message);
-        process.exit(1);
-    }
+async function connection() {
+    await connectDB();
+
+    app.listen((PORT), () => {
+        console.log(`Listening on port ${PORT}`);
+    });
 }
 
-startServer();
+connection();
