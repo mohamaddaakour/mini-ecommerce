@@ -1,3 +1,5 @@
+// this file is the starting point for our backend application
+
 import "dotenv/config";
 import app from "./app.ts";
 import mongoose from "mongoose";
@@ -10,9 +12,10 @@ async function connection(): Promise<void> {
 
         await connectDb();
 
+        // to create the server
         const server = app.listen(PORT, () => {
             console.log(`Server connected on port: ${PORT}`);
-        })
+        });
 
         async function shutdown(): Promise<void> {
             console.log("Server disconnected");
@@ -23,11 +26,10 @@ async function connection(): Promise<void> {
             server.close(() => {
                 console.log("Server closed");
                 process.exit(0);
-            })
+            });
         }
 
         process.on("SIGINT", shutdown);
-        process.on("SIGTERM", shutdown);
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(`Server startup failed: ${error.message}`);

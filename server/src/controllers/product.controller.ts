@@ -4,6 +4,7 @@ import { createProductService, editProductService, getProductService, deleteProd
 
 export async function createProduct(req: Request, res: Response): Promise<void> {
     try {
+        // req.body to take the data from the HTTP body request
         const { name, image, price } = req.body;
 
         if (!name || !image || !price) {
@@ -19,6 +20,7 @@ export async function createProduct(req: Request, res: Response): Promise<void> 
 
         const newProduct = await createProductService({ name, image, price });
 
+        // status code 201 means created
         res.status(201).json({ success: true, data: newProduct });
 
     } catch (error: unknown) {
@@ -28,6 +30,7 @@ export async function createProduct(req: Request, res: Response): Promise<void> 
             console.error(`Unknown error creating the product`);
         }
 
+        // status code 500 means server error
         res.status(500).json({ success: false, message: "Error creating a new product" });
     }
 }
@@ -36,6 +39,7 @@ export async function getProduct(req: Request, res: Response): Promise<void> {
     try {
         const products = await getProductService();
 
+        // status code 200 means OK
         res.status(200).json({ success: true, data: products });
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -50,10 +54,13 @@ export async function getProduct(req: Request, res: Response): Promise<void> {
 
 export async function editProduct(req: Request, res: Response): Promise<void> {
     try {
+        // req.params to take the data from the URL
         const { id } = req.params;
+
         const { name, price, image } = req.body;
 
         if (!name || !image || !price) {
+            // status code 400 means bad request
             res.status(400).json({ success: false, message: "name, image and price are required" });
 
             return;
@@ -85,6 +92,7 @@ export async function deleteProduct(req: Request, res: Response): Promise<void> 
         const product = await deleteProductService(id as string);
 
         if (!product) {
+            // status code 404 means not found
             res.status(404).json({ success: false, message: "Product not found" });
             return;
         }

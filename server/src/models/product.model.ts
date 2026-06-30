@@ -1,3 +1,5 @@
+// mongoose act the intermediary between javascript and mongodb
+
 import mongoose from "mongoose";
 
 export interface IProduct {
@@ -6,6 +8,7 @@ export interface IProduct {
     image: number;
 }
 
+// first we have to create the schema for the document we have
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -23,6 +26,7 @@ const productSchema = new mongoose.Schema({
     }
 });
 
+// than we have to create a model
 const Product = mongoose.models.Product || mongoose.model<IProduct>("Product", productSchema);
 
 export default Product;
